@@ -1,11 +1,15 @@
 
 
+
+
+
 import requests
 import pandas as pd
 import yfinance as yf
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from bs4 import BeautifulSoup
 import schedule
 import time
 
@@ -72,6 +76,91 @@ def process_disclosures():
     except Exception as e:
         print(f"Error processing disclosures: {e}")
 
+
+
+
+
+
+
+ # emailing when contracts become avaialble, assuming you have .csv or file of info
+
+# Set up the email details for alerts
+def send_email_alert(contract_details):
+    """Send an email alert when a new construction contract is available."""
+    sender_email = "your_email@gmail.com"  # Replace with your email
+    receiver_email = "recipient_email@example.com"  # Replace with recipient's email
+    password = "your_email_password"  # Replace with your email password
+    
+    subject = "New Construction Contract Available"
+    body = f"A new construction contract has become available:\n\n{contract_details}"
+
+    # Create email
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+    
+    # Send email using SMTP
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, msg.as_string())
+        print(f"Email sent successfully to {receiver_email}")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+# Function to scrape construction contracts from a website (example)
+def scrape_construction_contracts():
+    """Scrape the latest construction contracts available."""
+    # Replace with the URL of the site you want to scrape
+    url = "https://www.example.com/construction-contracts"  # Example URL, replace with actual URL
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        # Parse the page with BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Find the contract listings (you will need to inspect the HTML to get the correct class or tag)
+        contract_listings = soup.find_all('div', class_='contract-listing')  # Example class name
+        
+        for contract in contract_listings:
+            # Extract contract details (this depends on the HTML structure)
+            contract_title = contract.find('h3').text.strip()  # Example, adjust based on the HTML
+            contract_link = contract.find('a')['href']
+            contract_description = contract.find('p').text.strip()  # Example
+            
+            contract_details = f"Title: {contract_title}\n" \
+                               f"Description: {contract_description}\n" \
+                               f"Link: {contract_link}"
+
+            # Send email alert with contract details
+            send_email_alert(contract_details)
+    else:
+        print(f"Failed to retrieve website. Status code: {response.status_code}")
+
+# Function to schedule periodic checks
+def schedule_contract_alerts():
+    """Schedule the contract scraping and email alerts."""
+    # Check for new contracts every hour (you can adjust this frequency)
+    schedule.every(1).hour.do(scrape_construction_contracts)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(60)  # Wait 1 minute before checking again
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Function to schedule periodic checks
 def schedule_alerts():
     """Schedule the disclosure check to run periodically."""
@@ -89,4 +178,41 @@ def main():
 # Run the script
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
