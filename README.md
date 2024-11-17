@@ -58,3 +58,84 @@ For the purpose of this script, I will assume you have access to these disclosur
 - **API Rate Limits**: Be aware of potential rate limits when using APIs like `yfinance` or other services. Consider using caching to avoid excessive calls.
 
 This script provides a basic framework for monitoring congressional stock trades and alerting users when a significant transaction occurs.
+
+
+
+
+
+
+
+
+
+
+# PART 2: CONTRACT NOTIFICATION
+
+
+
+To create an email alert system for when **construction contracts** become available, you need to:
+
+1. **Identify the Source of Construction Contracts**: This could be government websites, construction industry portals, or specific contracting platforms that publish construction contract opportunities.
+   
+   Some common sources for construction contracts include:
+   - Government procurement sites like **FedBizOpps (SAM.gov)** for U.S. government contracts.
+   - Local government or state-run procurement sites.
+   - Private construction bid platforms (e.g., **BidClerk**, **Construction Bidboard**).
+
+2. **Scrape or Monitor the Contract Website**: Depending on the availability of data, you may either scrape websites or use an API (if available) to get the latest contracts.
+
+3. **Send Email Alerts**: Once new contracts are available, an email alert will be sent to a specified email address.
+
+4. **Schedule the Check**: The script will regularly check the website (e.g., every hour, daily) for new construction contracts.
+
+### Requirements:
+- **Requests**: To make HTTP requests.
+- **BeautifulSoup**: For scraping HTML content (if needed).
+- **Smtplib**: For sending email alerts.
+- **Schedule**: To check for new contracts at regular intervals.
+
+
+
+### Script Breakdown:
+
+1. **Email Alert System**:
+   - `send_email_alert`: This function sends an email with the contract details to the specified recipient using the **smtplib** library. You will need to replace the sender and receiver email addresses, as well as the sender's email password.
+   
+2. **Web Scraping**:
+   - `scrape_construction_contracts`: This function is responsible for scraping the webpage for new construction contracts. It uses **BeautifulSoup** to parse the HTML and extract details about the contracts (e.g., title, description, link).
+   - You'll need to customize the scraping logic based on the actual structure of the website you're monitoring. Use `soup.find_all()` and other `find` methods to target the correct HTML tags and classes. You can inspect the website's HTML using your browser's developer tools to determine the correct tags and attributes.
+
+3. **Scheduling Periodic Checks**:
+   - The script uses the **schedule** library to run the contract checking function periodically (in this case, every hour). You can modify this to check more or less frequently depending on your needs.
+
+4. **Running the Script**:
+   - When the script is executed, it continuously monitors the target website for new contracts, sending email alerts when new construction contracts are found.
+
+### Customization:
+
+1. **Website URL**:
+   - Replace the `url` in `scrape_construction_contracts` with the actual URL of the website you are scraping for construction contracts.
+   
+2. **Scraping Logic**:
+   - Modify the scraping logic based on the website’s structure. Use the browser's **Inspect** tool to find the correct HTML tags and class names for the contract title, description, and links.
+   - If the website provides an API to access the contracts, you can replace the scraping code with a direct API call instead.
+
+3. **Email Configuration**:
+   - Replace the sender email, receiver email, and password with your actual email configuration. If you're using Gmail, you may need to enable "Less Secure Apps" or create an **App Password** if 2-step verification is enabled.
+
+4. **Frequency of Checks**:
+   - Modify the scheduling interval in `schedule.every(1).hour.do(scrape_construction_contracts)` to change how frequently the script checks for new contracts (e.g., every 10 minutes, daily, etc.).
+
+### Potential Improvements:
+
+1. **Error Handling**:
+   - Add more robust error handling for network issues or changes in the website structure.
+   
+2. **Persistent Storage**:
+   - Keep track of previously sent contracts (e.g., using a file or database) to avoid sending duplicate alerts for the same contract.
+
+3. **Multiple Sources**:
+   - You can extend the script to monitor multiple websites for construction contracts by adding more functions and handling each site's structure.
+
+### Conclusion:
+
+This script provides an automated solution to monitor construction contract availability from a website and send email alerts whenever a new contract is published. It can be customized to fit the needs of specific websites or procurement platforms and can be scheduled to run periodically to ensure real-time monitoring.
