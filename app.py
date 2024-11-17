@@ -172,7 +172,7 @@ def schedule_alerts():
 
 # Main function
 def main():
-    print("Starting Congress Stock Trading Alert System...")
+    print("Starting Congress Stock Trading Alert System..contract available .")
     schedule_alerts()
 
 # Run the script
