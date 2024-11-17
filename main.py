@@ -1,5 +1,7 @@
 
+# app.py is typically used when you're working with a web application, particularly with frameworks like Flask or Django. The name app.py is a widely recognized convention for the main file that initializes and runs the application.
 
+# main.py is a more general name and is often used when you're writing standalone scripts or non-web-based programs. However, it can also be used in web apps if you prefer that naming convention.
 
 
 
